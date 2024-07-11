@@ -1,4 +1,4 @@
-package com.example.uceyewithcompose
+package com.example.uceyecomposeversion
 
 import org.junit.Test
 

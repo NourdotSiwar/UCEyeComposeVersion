@@ -9,11 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import com.example.uceyecomposeversion.navigation.Screens
 
 @Composable
-fun BottleScannerScreen(navController: NavController) {
+fun BottleScannerScreen() {
    Box(modifier = Modifier.fillMaxSize()){
        Column(
            modifier = Modifier

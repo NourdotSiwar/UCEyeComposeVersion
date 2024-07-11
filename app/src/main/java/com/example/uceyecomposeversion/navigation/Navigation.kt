@@ -11,7 +11,8 @@ import androidx.navigation.compose.composable
 import com.example.uceyecomposeversion.ui.screens.about.AboutScreen
 import com.example.uceyecomposeversion.ui.screens.bottleScanner.BottleScannerScreen
 import com.example.uceyecomposeversion.ui.screens.info.InfoScreen
-import com.example.uceyewithcompose.ui.screens.qrScanner.QRScannerScreen
+import com.example.uceyecomposeversion.ui.screens.qrScanner.QRCameraScreen
+import com.example.uceyecomposeversion.ui.screens.qrScanner.QRScannerScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -25,14 +26,18 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {
             AboutScreen()
         }
         composable(Screens.BottleScanner.screen) {
-            BottleScannerScreen(navController)
+            BottleScannerScreen()
         }
         composable(Screens.QRScanner.screen) {
             QRScannerScreen(navController)
         }
 
         composable(Screens.Instructions.screen) {
-            InfoScreen(navController)
+            InfoScreen()
+        }
+
+        composable(Screens.QRCamera.screen){
+            QRCameraScreen(navController)
         }
     }
 }

@@ -7,7 +7,7 @@ import com.example.uceyecomposeversion.navigation.BottomNavItem
 import com.example.uceyecomposeversion.navigation.Navigation
 import com.example.uceyecomposeversion.navigation.Screens
 import com.example.uceyecomposeversion.ui.components.BottomBar
-import com.example.uceyewithcompose.R
+import com.example.uceyecomposeversion.R
 
 @Composable
 fun MainScreen() {

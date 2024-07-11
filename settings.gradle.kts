@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "UCEyeWithCompose"
+rootProject.name = "UCEyeComposeVersion"
 include(":app")
  

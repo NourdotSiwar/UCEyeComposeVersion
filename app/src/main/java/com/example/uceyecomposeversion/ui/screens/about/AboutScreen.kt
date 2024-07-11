@@ -44,7 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
-import com.example.uceyewithcompose.R
+import com.example.uceyecomposeversion.R
 
 @Composable
 fun AboutScreen() {

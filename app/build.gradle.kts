@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.uceyewithcompose"
+    namespace = "com.example.uceyecomposeversion"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.uceyewithcompose"
+        applicationId = "com.example.uceyecomposeversion"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
