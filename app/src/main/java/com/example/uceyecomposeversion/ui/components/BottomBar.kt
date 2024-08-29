@@ -1,6 +1,5 @@
 package com.example.uceyecomposeversion.ui.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,7 +7,6 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,7 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.uceyecomposeversion.navigation.BottomNavItem
 
 @Composable
-fun BottomBar(navController: NavController, items: List<BottomNavItem>) {
+fun BottomBar(navController: NavController, items: List<BottomNavItem>, iconsEnabled: Boolean) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = Color.White,
@@ -30,7 +28,7 @@ fun BottomBar(navController: NavController, items: List<BottomNavItem>) {
 
         Row(modifier = Modifier.fillMaxWidth()) {
             items.forEach { item ->
-                val isSelected = currentScreen == item.screen
+                val isSelected = (currentScreen == item.screen)
                 IconButton(
                     onClick = {
                         navController.navigate(item.screen) {
@@ -40,16 +38,15 @@ fun BottomBar(navController: NavController, items: List<BottomNavItem>) {
                             launchSingleTop = true
                             restoreState = true
                         }
-                    },
-                    modifier = Modifier.weight(1f).padding(8.dp)
+                    }, modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp), enabled = iconsEnabled
                 ) {
-                    Column {
-                        Icon(
-                            painter = painterResource(id = item.icon),
-                            contentDescription = item.name,
-                            tint = if (isSelected) Color.White else Color.Black
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.screen,
+                        tint = if (isSelected) Color.White else Color.Black
+                    )
                 }
             }
         }
