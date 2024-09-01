@@ -25,13 +25,13 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, c
             AboutScreen()
         }
         composable(context.getString(R.string.bottle_scanner_screen)) {
-            BottleScannerScreen()
+            BottleScannerScreen(navController)
         }
         composable(context.getString(R.string.qr_scanner_screen)) {
             QRScannerScreen(navController)
         }
         composable(context.getString(R.string.information_screen)) {
-            InfoScreen()
+            InfoScreen(navController)
         }
     }
 }

@@ -6,8 +6,19 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -30,30 +42,34 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.example.uceyecomposeversion.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QRScannerScreen(navController: NavController) {
     var isScannerVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (!isScannerVisible) {
-            Button(onClick = { isScannerVisible = true }) {
-                Text("Scan QR Code")
+    Scaffold{ innerPadding ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (!isScannerVisible) {
+                Button(onClick = { isScannerVisible = true }) {
+                    Text("Scan QR Code")
+                }
+            } else {
+                AndroidViewScanner(context = context, onScanResult = { result ->
+                    // Hide scanner after getting a result
+                    isScannerVisible = false
+                    Log.d("QrCodeScannerScreen", "Scanned QR Code: $result")
+                    // Navigate to a different screen
+                    navController.navigate(context.getString(R.string.information_screen))
+                })
             }
-        } else {
-            AndroidViewScanner(context = context, onScanResult = { result ->
-                // Hide scanner after getting a result
-                isScannerVisible = false
-                Log.d("QrCodeScannerScreen", "Scanned QR Code: $result")
-                // Navigate to a different screen
-                navController.navigate(context.getString(R.string.information_screen))
-            })
         }
     }
+
 }
 
 @Composable
