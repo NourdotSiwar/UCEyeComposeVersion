@@ -35,5 +35,3 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, c
         }
     }
 }
-
-

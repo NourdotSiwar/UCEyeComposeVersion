@@ -2,10 +2,10 @@
     <string name="app_name">UCEyeComposeVersion</string>
 
     <!--  Screen Names  -->
-    <string name="about_us_screen">About Page</string>
-    <string name="bottle_scanner_screen">Bottle Scanner Page</string>
-    <string name="qr_scanner_screen">QR Scanner Page</string>
-    <string name="information_screen">Information Page</string>
+    <string name="about_us_screen">About</string>
+    <string name="bottle_scanner_screen">Medicine</string>
+    <string name="qr_scanner_screen">QR</string>
+    <string name="information_screen">Instructions</string>
 
     <!--    About US Screen -->
     <string name="about_us_info1">

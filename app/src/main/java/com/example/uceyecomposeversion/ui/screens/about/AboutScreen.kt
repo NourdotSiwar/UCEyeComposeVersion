@@ -66,7 +66,6 @@ fun AboutScreen() {
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-
     val tabItems = listOf(
         TabItem(
             title = stringResource(R.string.our_mission),
@@ -78,12 +77,8 @@ fun AboutScreen() {
             selectedIcon = Icons.Filled.Person
         )
     )
-    var selectedTabIndex by remember {
-        mutableIntStateOf(0)
-    }
-    val pagerState = rememberPagerState {
-        tabItems.size
-    }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState { tabItems.size }
     LaunchedEffect(selectedTabIndex) {
         pagerState.animateScrollToPage(selectedTabIndex)
     }
@@ -364,6 +359,12 @@ fun ContactUsButton() {
 
 }
 
+
 data class TabItem(
     val title: String, val unselectedIcon: ImageVector, val selectedIcon: ImageVector
 )
+
+data class TeamMember(
+    val name: String, val role: String, val imageRes: Int
+)
+
