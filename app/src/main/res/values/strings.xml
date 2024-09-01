@@ -17,8 +17,8 @@
         to detect objects that match the required parameters and subsequently reads aloud the
         medicine name for patients with poor vision.
     </string>
-    <string name="our_mission"><u>Our Mission:</u></string>
-    <string name="team"><u>Meet the Team:</u></string>
+    <string name="our_mission"><u>Our Mission</u></string>
+    <string name="team"><u>Meet the Team</u></string>
     <string name="team_info">
         The UCI Eyedrop Identifier App Team is a passionate team of individuals who bring diverse skills and expertise to the table.
         We are united by our shared vision and commitment to delivering excellence.</string>

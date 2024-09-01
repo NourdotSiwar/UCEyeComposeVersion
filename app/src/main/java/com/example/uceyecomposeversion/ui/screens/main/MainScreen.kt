@@ -124,9 +124,11 @@ fun MainBottomNavigationBar(
                 Icon(
                     painter = painterResource(id = item.icon),
                     contentDescription = null,
-                    tint = if (currentRoute == item.screen) Color.White else Color.Black
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
-            }, selected = currentRoute == item.screen, onClick = {
+            },
+            selected = currentRoute == item.screen,
+            onClick = {
                 navController.navigate(item.screen) {
                     popUpTo(navController.graph.startDestinationId)
                     launchSingleTop = true
