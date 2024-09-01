@@ -8,28 +8,26 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -42,30 +40,71 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.example.uceyecomposeversion.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun QRScannerScreen(navController: NavController) {
     var isScannerVisible by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var scanResults by remember { mutableStateOf("") }
 
-    Scaffold{ innerPadding ->
+    Scaffold { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!isScannerVisible) {
                 Button(onClick = { isScannerVisible = true }) {
-                    Text("Scan QR Code")
+                    Text(
+                        text = "Scan QR Code",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             } else {
                 AndroidViewScanner(context = context, onScanResult = { result ->
-                    // Hide scanner after getting a result
                     isScannerVisible = false
-                    Log.d("QrCodeScannerScreen", "Scanned QR Code: $result")
-                    // Navigate to a different screen
-                    navController.navigate(context.getString(R.string.information_screen))
+                    scanResults = result
+                    Log.d("QrCodeScannerScreen", "Scanned QR Code: $scanResults")
+                    showDialog = true
                 })
+            }
+
+            if (showDialog) {
+                AlertDialog(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+
+                    icon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Check,
+                        contentDescription = "Success Icon",
+                        tint = MaterialTheme.colorScheme.surfaceTint
+                    )
+                },
+                    text = { Text(
+                        text = "QR Scanned Successfully. Continue?",
+                        color = MaterialTheme.colorScheme.surfaceTint
+                    ) },
+                    onDismissRequest = { showDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = { navController.navigate(context.getString(R.string.information_screen)) }) {
+                            Text(
+                                text = "Confirm",
+                                color = MaterialTheme.colorScheme.surfaceTint
+                            )
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDialog = false }) {
+                            Text(
+                                text =  "Dismiss",
+                                color = MaterialTheme.colorScheme.surfaceTint
+                                )
+                        }
+                    }
+                )
             }
         }
     }
@@ -82,23 +121,17 @@ fun AndroidViewScanner(onScanResult: (String) -> Unit, context: Context) {
 
         // Initialize CodeScanner
         codeScanner = CodeScanner(ctx, scannerView).apply {
-            camera = CodeScanner.CAMERA_BACK // or CAMERA_FRONT or specific camera id
-            formats = CodeScanner.TWO_DIMENSIONAL_FORMATS // list of type BarcodeFormat
-            autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
-            scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
-            isAutoFocusEnabled = true // Whether to enable auto focus or not
-            isFlashEnabled = false // Whether to enable flash or not
-
-            // Handle decoded QR code
-            // Ensure UI updates are done on the main thread
+            camera = CodeScanner.CAMERA_BACK
+            formats = CodeScanner.TWO_DIMENSIONAL_FORMATS
+            autoFocusMode = AutoFocusMode.SAFE
+            scanMode = ScanMode.SINGLE
+            isAutoFocusEnabled = true
+            isFlashEnabled = false
             decodeCallback = DecodeCallback { result ->
                 (context as? Activity)?.runOnUiThread {
                     onScanResult(result.text)
                 }
             }
-
-            // Handle errors
-            // Ensure UI updates are done on the main thread
             errorCallback = ErrorCallback { error ->
                 (context as? Activity)?.runOnUiThread {
                     Log.e("AndroidViewScanner", "Camera initialization error: ${error.message}")

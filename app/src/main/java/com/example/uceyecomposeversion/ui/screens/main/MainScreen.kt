@@ -138,28 +138,23 @@ private fun MainBottomAppBar(
     navController: NavHostController,
     isCameraPermissionGranted: Boolean
 ) {
-    val context = LocalContext.current
-    var selectedItemIndex by rememberSaveable {
-        mutableIntStateOf(bottomNavItems.indexOfFirst {
-            it.title == context.getString(R.string.qr_scanner_screen)
-        })
-    }
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary
     ) {
-        bottomNavItems.forEachIndexed { index, item ->
-            NavigationBarItem(selected = selectedItemIndex == index, onClick = {
-                selectedItemIndex = index
-                navController.navigate(item.title)
+        bottomNavItems.forEach { item ->
+            NavigationBarItem(
+                selected = currentDestination?.route == item.title, onClick = {
+                navController.navigate(item.title) {
+                    launchSingleTop = true
+                }
             }, colors = NavigationBarItemDefaults.colors(
                 selectedTextColor = MaterialTheme.colorScheme.onPrimary,
                 indicatorColor = MaterialTheme.colorScheme.inversePrimary
             ), label = {
-                Text(
-                    text = item.title, color = MaterialTheme.colorScheme.onPrimary
-                )
-
+                Text(text = item.title, color = MaterialTheme.colorScheme.onPrimary)
             }, enabled = isCameraPermissionGranted, alwaysShowLabel = false, icon = {
                 Icon(
                     painter = painterResource(item.icon),
