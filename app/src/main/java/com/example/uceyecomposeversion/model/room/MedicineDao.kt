@@ -32,8 +32,8 @@ interface MedicineDao {
     suspend fun updateMedicine(medicine: MedicineEntity)
 
     // UPDATE SINGLE MEDICINE'S EXPIRATION DATE
-    // TODO: @Query("UPDATE medicinesDB SET expirationDate = :newExpirationDate WHERE medicineName = :medicineName")
-    // TODO:  suspend fun updateExpirationDate(medicineName: String, newExpirationDate: String)
+    @Query("UPDATE medicinesDB SET expirationDate = :newExpirationDate WHERE medicineName = :medicineName")
+    suspend fun updateExpirationDate(medicineName: String, newExpirationDate: String)
 
     // DELETE SINGLE ITEM
     @Query("DELETE FROM medicinesDB WHERE medicineName = :medicineName")

@@ -18,19 +18,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.budiyev.android.codescanner.AutoFocusMode
 import com.budiyev.android.codescanner.CodeScanner
@@ -39,6 +38,7 @@ import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.example.uceyecomposeversion.R
+import com.example.uceyecomposeversion.viewmodels.QrViewModel
 
 
 @Composable
@@ -47,6 +47,7 @@ fun QRScannerScreen(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var scanResults by remember { mutableStateOf("") }
+    val qrViewModel: QrViewModel = viewModel()
 
     Scaffold { innerPadding ->
         Column(
@@ -59,52 +60,46 @@ fun QRScannerScreen(navController: NavController) {
             if (!isScannerVisible) {
                 Button(onClick = { isScannerVisible = true }) {
                     Text(
-                        text = "Scan QR Code",
-                        color = MaterialTheme.colorScheme.onPrimary
+                        text = "Scan QR Code", color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             } else {
                 AndroidViewScanner(context = context, onScanResult = { result ->
                     isScannerVisible = false
                     scanResults = result
-                    Log.d("QrCodeScannerScreen", "Scanned QR Code: $scanResults")
                     showDialog = true
+                    Log.d("QrCodeScannerScreen", "Scanned QR Code: $scanResults")
+                    qrViewModel.insertQrScanResult(scanResults)
                 })
             }
 
             if (showDialog) {
-                AlertDialog(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                AlertDialog(containerColor = MaterialTheme.colorScheme.primaryContainer,
 
                     icon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Check,
-                        contentDescription = "Success Icon",
-                        tint = MaterialTheme.colorScheme.surfaceTint
-                    )
-                },
-                    text = { Text(
-                        text = "QR Scanned Successfully. Continue?",
-                        color = MaterialTheme.colorScheme.surfaceTint
-                    ) },
-                    onDismissRequest = { showDialog = false },
-                    confirmButton = {
+                        Icon(
+                            imageVector = Icons.Outlined.Check,
+                            contentDescription = "Success Icon",
+                            tint = MaterialTheme.colorScheme.surfaceTint
+                        )
+                    }, text = {
+                        Text(
+                            text = "QR Scanned Successfully. Continue?",
+                            color = MaterialTheme.colorScheme.surfaceTint
+                        )
+                    }, onDismissRequest = { showDialog = false }, confirmButton = {
                         TextButton(onClick = { navController.navigate(context.getString(R.string.information_screen)) }) {
                             Text(
-                                text = "Confirm",
-                                color = MaterialTheme.colorScheme.surfaceTint
+                                text = "Confirm", color = MaterialTheme.colorScheme.surfaceTint
                             )
                         }
-                    },
-                    dismissButton = {
+                    }, dismissButton = {
                         TextButton(onClick = { showDialog = false }) {
                             Text(
-                                text =  "Dismiss",
-                                color = MaterialTheme.colorScheme.surfaceTint
-                                )
+                                text = "Dismiss", color = MaterialTheme.colorScheme.surfaceTint
+                            )
                         }
-                    }
-                )
+                    })
             }
         }
     }
