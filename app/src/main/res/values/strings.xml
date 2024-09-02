@@ -46,7 +46,7 @@
     <string name="hailey_info">Graphic Designer</string>
     <string name="contact">Contact Us</string>
     <string name="contact_info">We value your feedback and are always here to assist you.
-        If you have any questions, suggestions, or just want to say hello, feel free to reach out to us at eyedrop.linresearchproject@gmail.com.</string>
+        If you have any questions, suggestions, or just want to say hello, feel free to reach out to us at: %1$s</string>
 
 
     <string name="take_photo">Take Photo</string>

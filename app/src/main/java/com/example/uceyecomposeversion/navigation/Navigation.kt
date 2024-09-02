@@ -21,11 +21,10 @@ import com.example.uceyecomposeversion.ui.screens.info.InfoScreen
 import com.example.uceyecomposeversion.ui.screens.qrScanner.QRScannerScreen
 
 @Composable
-fun Navigation(navController: NavHostController, paddingValues: PaddingValues, context: Context) {
+fun Navigation(navController: NavHostController, context: Context) {
     NavHost(
         navController = navController,
-        startDestination = context.getString(R.string.qr_scanner_screen),
-        modifier = Modifier.padding(paddingValues)
+        startDestination = context.getString(R.string.qr_scanner_screen)
     ) {
         composable(context.getString(R.string.about_us_screen), enterTransition = {
             fadeIn(
@@ -46,7 +45,7 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, c
                 towards = AnimatedContentTransitionScope.SlideDirection.End
             )
         }) {
-            AboutScreen()
+            AboutScreen(navController)
         }
         composable(context.getString(R.string.bottle_scanner_screen)) {
             BottleScannerScreen(navController)

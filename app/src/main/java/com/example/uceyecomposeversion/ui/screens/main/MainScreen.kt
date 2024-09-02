@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Info
@@ -30,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -41,10 +44,12 @@ fun MainScreen() {
     val context = LocalContext.current
     val navController = rememberNavController()
     var isCameraPermissionGranted by rememberSaveable { mutableStateOf(false) }
-    val requestPermissionLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+    val requestPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             isCameraPermissionGranted = isGranted
         }
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val bottomNavItems = listOf(
         BottomNavigationItem(
             stringResource(id = R.string.bottle_scanner_screen), R.drawable.bottle_icon
@@ -54,99 +59,49 @@ fun MainScreen() {
             stringResource(id = R.string.information_screen), R.drawable.instructions_icon
         )
     )
+    val showBottomNavigationBarRoutes = setOf(
+        stringResource(R.string.bottle_scanner_screen),
+        stringResource(R.string.qr_scanner_screen),
+        stringResource(R.string.information_screen),
+    )
+    val showBottomNavigationBar = currentRoute in showBottomNavigationBarRoutes
 
     LaunchedEffect(Unit) {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
-    Scaffold(topBar = {
-        MainTopAppBar(navController = navController, context = context, isCameraPermissionGranted)
-    }, bottomBar = {
-        MainBottomAppBar(bottomNavItems, navController, isCameraPermissionGranted)
-
-    }) { innerPadding ->
+    Scaffold(bottomBar = {
+        if(showBottomNavigationBar) {
+            MainBottomAppBar(
+                bottomNavItems = bottomNavItems,
+                navController = navController,
+                isCameraPermissionGranted = isCameraPermissionGranted,
+                currentDestination = currentDestination
+            )
+        }
+    }) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
             if (isCameraPermissionGranted) {
                 Navigation(
-                    navController = navController, paddingValues = innerPadding, context = context
+                    navController = navController,
+                    context = context
                 )
             } else {
-                PermissionRequestScreen {
-                    requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-                }
+                PermissionRequestScreen()
             }
         }
     }
-}
-
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun MainTopAppBar(
-    navController: NavHostController, context: Context, isCameraPermissionGranted: Boolean
-) {
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStackEntry?.destination?.route
-    val showBackButtonRoutes = setOf(stringResource(R.string.about_us_screen))
-    val showBackButton = currentRoute in showBackButtonRoutes
-    val showInfoBackRoutes = setOf(
-        stringResource(R.string.bottle_scanner_screen),
-        stringResource(R.string.qr_scanner_screen),
-        stringResource(R.string.information_screen),
-        )
-    val showInfoButton = currentRoute in showInfoBackRoutes
-
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary
-        ),
-        title = {
-            Text(
-                stringResource(id = R.string.app_name)
-            )
-        },
-        navigationIcon = {
-            if (showBackButton) {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-        },
-        actions = {
-            if (showInfoButton) {
-                IconButton(
-                    onClick = {
-                        navController.navigate(context.getString(R.string.about_us_screen))
-                    },
-                    enabled = isCameraPermissionGranted,
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Info,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = null
-                    )
-                }
-            }
-        },
-    )
 }
 
 @Composable
 private fun MainBottomAppBar(
     bottomNavItems: List<BottomNavigationItem>,
     navController: NavHostController,
-    isCameraPermissionGranted: Boolean
+    isCameraPermissionGranted: Boolean,
+    currentDestination: NavDestination?
 ) {
-    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.primary,
