@@ -95,7 +95,6 @@ private fun MainTopAppBar(
         stringResource(R.string.bottle_scanner_screen),
         stringResource(R.string.qr_scanner_screen),
         stringResource(R.string.information_screen),
-
         )
     val showInfoButton = currentRoute in showInfoBackRoutes
 
@@ -133,7 +132,7 @@ private fun MainTopAppBar(
                     Icon(
                         imageVector = Icons.Outlined.Info,
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = "Localized description"
+                        contentDescription = null
                     )
                 }
             }
@@ -160,7 +159,7 @@ private fun MainBottomAppBar(
                 }
             }, colors = NavigationBarItemDefaults.colors(
                 selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                indicatorColor = MaterialTheme.colorScheme.inversePrimary
+                indicatorColor = MaterialTheme.colorScheme.onSurface
             ), label = {
                 Text(text = item.title, color = MaterialTheme.colorScheme.onPrimary)
             }, enabled = isCameraPermissionGranted, alwaysShowLabel = false, icon = {

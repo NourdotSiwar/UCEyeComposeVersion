@@ -14,5 +14,6 @@ data class MedicineEntity(
     @ColumnInfo(name = "bothEyesSelected") val bothEyesSelected: Boolean = false,
     @ColumnInfo(name = "frequency") val frequency: String,
     @ColumnInfo(name = "specialInstruction") val specialInstruction: String = "N/A",
-    @ColumnInfo(name = "expirationDate") val expirationDate: String = "N/A" // This will be initially null and later updated by the user
+    @ColumnInfo(name = "expirationDate") val expirationDate: String = "N/A", // This will be initially null and later updated by the user
+    @ColumnInfo(name = "timeStamp") val timestamp: Long = 0
 )

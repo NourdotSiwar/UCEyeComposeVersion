@@ -16,11 +16,11 @@ interface MedicineDao {
 
     // INSERT/REPLACE NEW/EXISTING SINGLE ITEM
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMedicine(medicines: List<MedicineEntity>)
+    suspend fun insertMedicine(medicine: MedicineEntity)
 
     // GET ALL MEDICINES
-    @Query("SELECT * FROM medicinesDB")
-    fun getAllMedicines(): Flow<List<MedicineEntity>>
+    @Query("SELECT * FROM medicinesDB ORDER BY timeStamp DESC")
+    fun getAllMedicinesSortedByDate(): Flow<List<MedicineEntity>>
 
     // GET SINGLE MEDICINE
     @Query("SELECT * FROM medicinesDB WHERE medicineName = :medicineName")

@@ -1,6 +1,7 @@
 package com.example.uceyecomposeversion.viewmodels
 
 import android.app.Application
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 
 class QrViewModel(private val application: Application) :
@@ -23,7 +27,7 @@ class QrViewModel(private val application: Application) :
 
     init {
         viewModelScope.launch {
-            medicineDao.getAllMedicines().collect { medicineList ->
+            medicineDao.getAllMedicinesSortedByDate().collect { medicineList ->
                 _medicines.value = medicineList
             }
         }
@@ -33,13 +37,44 @@ class QrViewModel(private val application: Application) :
         viewModelScope.launch {
             try {
                 val medicines: List<MedicineEntity> = json.decodeFromString(jsonString)
-                medicineDao.insertMedicines(medicines)
+                medicines.forEach { medicine ->
+                    val medicineRecord = MedicineEntity(
+                        medicineName = medicine.medicineName,
+                        leftEyeSelected = medicine.leftEyeSelected,
+                        rightEyeSelected = medicine.rightEyeSelected,
+                        bothEyesSelected = medicine.bothEyesSelected,
+                        frequency = medicine.frequency,
+                        specialInstruction = medicine.specialInstruction,
+                        expirationDate = medicine.expirationDate,
+                        timestamp = Date().time
+                    )
+                    medicineDao.insertMedicine(medicineRecord)
+                }
+
             } catch (e: Exception) {
                 Log.e(
-                    "QrViewModel",
-                    "Error handling QR Scan Result: ${e.message} due to ${e.cause}"
+                    "QrViewModel", "Error handling QR Scan Result: ${e.message} due to ${e.cause}"
                 )
             }
         }
     }
+
+    fun getRelativeTime(date: Date): String {
+        val now = Date()
+        val diffMillis = now.time - date.time
+        val diffSeconds = TimeUnit.MILLISECONDS.toSeconds(diffMillis)
+        val diffMinutes = TimeUnit.MILLISECONDS.toMinutes(diffMillis)
+        val diffHours = TimeUnit.MILLISECONDS.toHours(diffMillis)
+        val diffDays = TimeUnit.MILLISECONDS.toDays(diffMillis)
+
+        return when {
+            diffSeconds < 60 -> "Just now"
+            diffMinutes < 60 -> "${diffMinutes}m ago"
+            diffHours < 24 -> "${diffHours}h ago"
+            diffDays == 1L -> "Yesterday"
+            diffDays < 30 -> "${diffDays}d ago"
+            else -> SimpleDateFormat("MMM d", Locale.getDefault()).format(date)
+        }
+    }
+
 }
