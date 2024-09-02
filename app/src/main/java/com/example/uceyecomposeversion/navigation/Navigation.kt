@@ -1,6 +1,12 @@
 package com.example.uceyecomposeversion.navigation
 
 import android.content.Context
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -21,7 +27,25 @@ fun Navigation(navController: NavHostController, paddingValues: PaddingValues, c
         startDestination = context.getString(R.string.qr_scanner_screen),
         modifier = Modifier.padding(paddingValues)
     ) {
-        composable(context.getString(R.string.about_us_screen)) {
+        composable(context.getString(R.string.about_us_screen), enterTransition = {
+            fadeIn(
+//                    animationSpec = tween(
+//                        200, easing = LinearEasing
+//                    )
+            ) + slideIntoContainer(
+                animationSpec = tween(200, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        }, exitTransition = {
+            fadeOut(
+//                    animationSpec = tween(
+//                        300, easing = LinearEasing
+//                    )
+            ) + slideOutOfContainer(
+                animationSpec = tween(200, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }) {
             AboutScreen()
         }
         composable(context.getString(R.string.bottle_scanner_screen)) {

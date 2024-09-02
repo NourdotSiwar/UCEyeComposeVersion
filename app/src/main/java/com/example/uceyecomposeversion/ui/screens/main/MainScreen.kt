@@ -23,7 +23,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -92,6 +91,14 @@ private fun MainTopAppBar(
     val currentRoute = currentBackStackEntry?.destination?.route
     val showBackButtonRoutes = setOf(stringResource(R.string.about_us_screen))
     val showBackButton = currentRoute in showBackButtonRoutes
+    val showInfoBackRoutes = setOf(
+        stringResource(R.string.bottle_scanner_screen),
+        stringResource(R.string.qr_scanner_screen),
+        stringResource(R.string.information_screen),
+
+        )
+    val showInfoButton = currentRoute in showInfoBackRoutes
+
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -116,17 +123,19 @@ private fun MainTopAppBar(
             }
         },
         actions = {
-            IconButton(
-                onClick = {
-                    navController.navigate(context.getString(R.string.about_us_screen))
-                },
-                enabled = isCameraPermissionGranted,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Info,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    contentDescription = "Localized description"
-                )
+            if (showInfoButton) {
+                IconButton(
+                    onClick = {
+                        navController.navigate(context.getString(R.string.about_us_screen))
+                    },
+                    enabled = isCameraPermissionGranted,
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        contentDescription = "Localized description"
+                    )
+                }
             }
         },
     )
@@ -145,8 +154,7 @@ private fun MainBottomAppBar(
         contentColor = MaterialTheme.colorScheme.onPrimary
     ) {
         bottomNavItems.forEach { item ->
-            NavigationBarItem(
-                selected = currentDestination?.route == item.title, onClick = {
+            NavigationBarItem(selected = currentDestination?.route == item.title, onClick = {
                 navController.navigate(item.title) {
                     launchSingleTop = true
                 }
