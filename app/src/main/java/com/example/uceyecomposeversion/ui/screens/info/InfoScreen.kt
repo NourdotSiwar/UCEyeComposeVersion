@@ -2,6 +2,7 @@ package com.example.uceyecomposeversion.ui.screens.info
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.uceyecomposeversion.R
 import com.example.uceyecomposeversion.viewmodels.QrViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.Date
 
 @Composable
@@ -49,11 +52,13 @@ fun InfoScreen(navController: NavController) {
     val qrViewModel: QrViewModel = viewModel()
     val medicines by qrViewModel.medicines.collectAsState()
 
-    Scaffold(topBar = {
-        InstructionsTopAppBar(
-            navController = navController, context = context
-        )
-    }) { innerPadding ->
+    Scaffold(
+        topBar = {
+            InstructionsTopAppBar(
+                navController = navController, context = context
+            )
+        },
+    ) { innerPadding ->
         if (medicines.isEmpty()) {
             Column(
                 modifier = Modifier
@@ -62,7 +67,7 @@ fun InfoScreen(navController: NavController) {
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+            ) {
                 Text(
                     text = "No Medicine List Added"
                 )
@@ -75,12 +80,13 @@ fun InfoScreen(navController: NavController) {
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-
-                ) {
+            ) {
                 medicines.forEach { medicine ->
 
-                    ListItem(
-                        modifier = Modifier,
+                    ListItem(modifier = Modifier.clickable {
+                        val encodedMedicineName = URLEncoder.encode(medicine.medicineName, StandardCharsets.UTF_8.toString())
+                        navController.navigate(context.getString(R.string.medicine_detail_screen) + "/$encodedMedicineName")
+                    },
                         headlineContent = { Text(text = medicine.medicineName) },
                         trailingContent = {
                             Column {
@@ -103,7 +109,8 @@ fun InfoScreen(navController: NavController) {
                                     modifier = Modifier
                                         .size(40.dp)
                                         .background(
-                                            MaterialTheme.colorScheme.surfaceTint, shape = CircleShape
+                                            MaterialTheme.colorScheme.surfaceTint,
+                                            shape = CircleShape
                                         ), contentAlignment = Alignment.Center
                                 ) {
                                     Text(
@@ -114,8 +121,7 @@ fun InfoScreen(navController: NavController) {
                                     )
                                 }
                             }
-                        }
-                    )
+                        })
                 }
             }
         }

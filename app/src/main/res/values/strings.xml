@@ -6,6 +6,7 @@
     <string name="bottle_scanner_screen">Medicine</string>
     <string name="qr_scanner_screen">QR</string>
     <string name="information_screen">Instructions</string>
+    <string name="medicine_detail_screen">MedicineDetail</string>
 
     <!--    About US Screen -->
     <string name="about_us_info1">

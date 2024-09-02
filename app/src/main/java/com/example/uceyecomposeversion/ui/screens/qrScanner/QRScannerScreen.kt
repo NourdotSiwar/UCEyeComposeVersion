@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
@@ -56,14 +55,12 @@ fun QRScannerScreen(navController: NavController) {
     var scanResults by remember { mutableStateOf("") }
     val qrViewModel: QrViewModel = viewModel()
 
-    Scaffold(
-        topBar = {
-            QrScannerTopAppBar(
-                navController = navController,
-                context = context,
-            )
-        }
-    ) { innerPadding ->
+    Scaffold(topBar = {
+        QrScannerTopAppBar(
+            navController = navController,
+            context = context,
+        )
+    }) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,7 +80,7 @@ fun QRScannerScreen(navController: NavController) {
                     scanResults = result
                     showDialog = true
                     Log.d("QrCodeScannerScreen", "Scanned QR Code: $scanResults")
-                    qrViewModel.insertQrScanResult(scanResults)
+                    qrViewModel.insertMedicines(scanResults)
                 })
             }
 

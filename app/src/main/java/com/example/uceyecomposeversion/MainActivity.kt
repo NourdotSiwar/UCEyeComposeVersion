@@ -24,10 +24,10 @@ class MainActivity : ComponentActivity() {
             // Set the status bar and navigation bar colors
             LaunchedEffect(Unit) {
                 systemUiController.setSystemBarsColor(
-                    color = if(isDarkTheme) Color.Black else Color.White
+                    color = if (isDarkTheme) Color.Black else Color.White
                 )
                 systemUiController.setNavigationBarColor(
-                    color = if(isDarkTheme) Color.Black else Color.White
+                    color = if (isDarkTheme) Color.Black else Color.White
                 )
             }
 

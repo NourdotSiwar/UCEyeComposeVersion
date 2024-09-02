@@ -4,9 +4,14 @@ import android.Manifest
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Info
@@ -28,9 +33,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
@@ -65,6 +72,7 @@ fun MainScreen() {
         stringResource(R.string.information_screen),
     )
     val showBottomNavigationBar = currentRoute in showBottomNavigationBarRoutes
+    val modifier = Modifier.padding(bottom = 75.dp)
 
     LaunchedEffect(Unit) {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
@@ -81,13 +89,13 @@ fun MainScreen() {
         }
     }) {
         Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            if (isCameraPermissionGranted) {
-                Navigation(
-                    navController = navController,
-                    context = context
-                )
+            modifier = if(showBottomNavigationBar) modifier.fillMaxSize() else Modifier.fillMaxSize())
+        {
+                if (isCameraPermissionGranted) {
+                    Navigation(
+                        navController = navController,
+                        context = context
+                    )
             } else {
                 PermissionRequestScreen()
             }
