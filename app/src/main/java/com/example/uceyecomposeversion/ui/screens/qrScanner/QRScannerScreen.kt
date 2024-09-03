@@ -44,7 +44,7 @@ import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.example.uceyecomposeversion.R
-import com.example.uceyecomposeversion.viewmodels.QrViewModel
+import com.example.uceyecomposeversion.viewmodels.medicineViewModel
 
 
 @Composable
@@ -53,7 +53,7 @@ fun QRScannerScreen(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var scanResults by remember { mutableStateOf("") }
-    val qrViewModel: QrViewModel = viewModel()
+    val medicineViewModel: medicineViewModel = viewModel()
 
     Scaffold(topBar = {
         QrScannerTopAppBar(
@@ -70,9 +70,7 @@ fun QRScannerScreen(navController: NavController) {
         ) {
             if (!isScannerVisible) {
                 Button(onClick = { isScannerVisible = true }) {
-                    Text(
-                        text = "Scan QR Code", color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    Text(text = "Scan QR Code", color = MaterialTheme.colorScheme.onPrimary)
                 }
             } else {
                 AndroidViewScanner(context = context, onScanResult = { result ->
@@ -80,10 +78,8 @@ fun QRScannerScreen(navController: NavController) {
                     scanResults = result
                     showDialog = true
                     Log.d("QrCodeScannerScreen", "Scanned QR Code: $scanResults")
-                    qrViewModel.insertMedicines(scanResults)
                 })
             }
-
             if (showDialog) {
                 AlertDialog(containerColor = MaterialTheme.colorScheme.primaryContainer,
 
@@ -99,7 +95,10 @@ fun QRScannerScreen(navController: NavController) {
                             color = MaterialTheme.colorScheme.surfaceTint
                         )
                     }, onDismissRequest = { showDialog = false }, confirmButton = {
-                        TextButton(onClick = { navController.navigate(context.getString(R.string.information_screen)) }) {
+                        TextButton(onClick = {
+                            medicineViewModel.insertMedicines(scanResults)
+                            navController.navigate(context.getString(R.string.information_screen))
+                        }) {
                             Text(
                                 text = "Confirm", color = MaterialTheme.colorScheme.surfaceTint
                             )

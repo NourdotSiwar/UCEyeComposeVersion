@@ -18,14 +18,14 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 
-class QrViewModel(private val application: Application) :
+class medicineViewModel(private val application: Application) :
     AndroidViewModel(application = application) {
 
     private val medicineDao = AppApplication(application).database.medicineDao()
     private val _medicines = MutableStateFlow<List<MedicineEntity>>(emptyList())
     val medicines: StateFlow<List<MedicineEntity>> = _medicines
 
-    val json = Json { ignoreUnknownKeys = true }
+    private val json = Json { ignoreUnknownKeys = true }
 
     init {
         viewModelScope.launch {
@@ -61,9 +61,16 @@ class QrViewModel(private val application: Application) :
         }
     }
 
-    // Function to get item by name using Flow
     fun getMedicineByName(name: String): Flow<MedicineEntity?> {
         return medicineDao.getMedicineByName(name)
+    }
+
+    suspend fun deleteMedicine(medicineName: String) {
+            medicineDao.deleteMedicine(medicineName)
+    }
+
+    suspend fun deleteMedicines() {
+        medicineDao.deleteAllMedicines()
     }
 
     fun getRelativeTime(date: Date): String {
@@ -83,6 +90,5 @@ class QrViewModel(private val application: Application) :
             else -> SimpleDateFormat("MMM d", Locale.getDefault()).format(date)
         }
     }
-
 
 }

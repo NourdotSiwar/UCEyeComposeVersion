@@ -49,6 +49,11 @@
     <string name="contact_info">We value your feedback and are always here to assist you.
         If you have any questions, suggestions, or just want to say hello, feel free to reach out to us at: %1$s</string>
 
+    <!--Action Dialogs -->
+    <string name="add_medicines_dialog">Only add a new or replace medicine(s) if instructed by a healthcare professional</string>
+    <string name="delete_medicines_dialog">Only delete all listed medicine(s) if instructed by a healthcare professional</string>
+    <string name="delete_one_medicine_dialog">Only delete this medicine if instructed by a healthcare professional</string>
+    <string name="edit_one_medicine_dialog">Only edit medicine if instructed by a healthcare professional</string>
 
     <string name="take_photo">Take Photo</string>
     <string name="start_capture">Start Capture</string>
