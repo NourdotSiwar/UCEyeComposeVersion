@@ -197,23 +197,6 @@ private fun InstructionsTopAppBar(
                     onClick = {
                         expanded = false
                         showDialog = true
-                        message = context.getString(R.string.delete_medicines_dialog)
-                              },
-                    text = {
-                        Row {
-                            Icon(
-                                Icons.Outlined.Delete,
-                                contentDescription = null
-                            )
-                            Spacer(Modifier.width(10.dp))
-                            Text("Delete Medicines")
-                        }
-                    }
-                )
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        showDialog = true
                         message = context.getString(R.string.add_medicines_dialog)
                               },
                     text = {
@@ -223,7 +206,24 @@ private fun InstructionsTopAppBar(
                                 contentDescription = null
                             )
                             Spacer(Modifier.width(10.dp))
-                            Text("Add medicine/s")
+                            Text("Add medicine(s)")
+                        }
+                    }
+                )
+                DropdownMenuItem(
+                    onClick = {
+                        expanded = false
+                        showDialog = true
+                        message = context.getString(R.string.delete_medicines_dialog)
+                    },
+                    text = {
+                        Row {
+                            Icon(
+                                Icons.Outlined.Delete,
+                                contentDescription = null
+                            )
+                            Spacer(Modifier.width(10.dp))
+                            Text("Delete Medicines")
                         }
                     }
                 )
