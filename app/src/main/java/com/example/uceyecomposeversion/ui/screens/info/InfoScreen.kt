@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.uceyecomposeversion.R
+import com.example.uceyecomposeversion.model.room.MedicineEntity
 import com.example.uceyecomposeversion.viewmodels.medicineViewModel
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -76,18 +78,7 @@ fun InfoScreen(navController: NavController) {
         },
     ) { innerPadding ->
         if (medicines.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = "No Medicine List Added"
-                )
-            }
+            EmptyMedicineListColumn(innerPadding)
         } else {
             Column(
                 modifier = Modifier
@@ -99,50 +90,76 @@ fun InfoScreen(navController: NavController) {
             ) {
                 medicines.forEach { medicine ->
 
-                    ListItem(modifier = Modifier.clickable {
-                        val encodedMedicineName = URLEncoder.encode(medicine.medicineName, StandardCharsets.UTF_8.toString())
-                        navController.navigate(context.getString(R.string.medicine_detail_screen) + "/$encodedMedicineName")
-                    },
-                        headlineContent = { Text(text = medicine.medicineName) },
-                        trailingContent = {
-                            Column {
-                                Text(
-                                    text = medicineViewModel.getRelativeTime(Date(medicine.timestamp))
-                                )
-                                Spacer(Modifier.height(10.dp))
-                                Icon(
-                                    imageVector = Icons.Outlined.KeyboardArrowRight,
-                                    contentDescription = null,
-                                    modifier = Modifier.align(Alignment.End)
-                                )
-                            }
-                        },
-                        leadingContent = {
-                            Box(
-                                modifier = Modifier.padding(vertical = 10.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .background(
-                                            MaterialTheme.colorScheme.surfaceTint,
-                                            shape = CircleShape
-                                        ), contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = medicine.medicineName.first().toString(),
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 20.sp
-                                    )
-                                }
-                            }
-                        }
-                    )
+                    MedicineListItem(medicine, navController, context, medicineViewModel)
                 }
             }
         }
     }
+}
+
+@Composable
+private fun EmptyMedicineListColumn(innerPadding: PaddingValues) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(text = "No Medicine List Added")
+    }
+}
+
+@Composable
+private fun MedicineListItem(
+    medicine: MedicineEntity,
+    navController: NavController,
+    context: Context,
+    medicineViewModel: medicineViewModel
+) {
+    ListItem(
+        modifier = Modifier.clickable {
+            val encodedMedicineName =
+                URLEncoder.encode(medicine.medicineName, StandardCharsets.UTF_8.toString())
+            navController.navigate(context.getString(R.string.medicine_detail_screen) + "/$encodedMedicineName")
+        },
+        headlineContent = { Text(text = medicine.medicineName) },
+        trailingContent = {
+            Column {
+                Text(
+                    text = medicineViewModel.getRelativeTime(Date(medicine.timestamp))
+                )
+                Spacer(Modifier.height(10.dp))
+                Icon(
+                    imageVector = Icons.Outlined.KeyboardArrowRight,
+                    contentDescription = null,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
+        },
+        leadingContent = {
+            Box(
+                modifier = Modifier.padding(vertical = 10.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            MaterialTheme.colorScheme.surfaceTint,
+                            shape = CircleShape
+                        ), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = medicine.medicineName.first().toString(),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                }
+            }
+        }
+    )
 }
 
 @Composable
@@ -237,19 +254,39 @@ private fun InstructionsTopAppBar(
                             contentDescription = "Warning Icon",
                             tint = MaterialTheme.colorScheme.error
                         )
-                    }, text = {
+                    },
+                    title = {
+                        when(message){
+                            context.getString(R.string.add_medicines_dialog) -> Text(
+                                text = "Add medicine(s)?",
+                                fontSize = MaterialTheme.typography.titleMedium.fontSize
+                            )
+                            context.getString(R.string.delete_medicines_dialog) -> Text(
+                                text = "Delete medicine(s)?",
+                                fontSize = MaterialTheme.typography.titleMedium.fontSize
+                            )
+                            else -> Text(text = "")
+                        }
+                    },
+                    text = {
                         Text(
                             text = message,
-                            color = MaterialTheme.colorScheme.surfaceTint
+                            color = MaterialTheme.colorScheme.surfaceTint,
                         )
                     }, onDismissRequest = { showDialog = false }, confirmButton = {
                         TextButton(onClick = {
-                            if(message == context.getString(R.string.delete_medicines_dialog)){
-                                scope.launch {
-                                    viewModel.deleteMedicines()
+                            when(message){
+                                context.getString(R.string.add_medicines_dialog) -> {
+                                    showDialog = false
+                                    navController.navigate(context.getString(R.string.qr_scanner_screen))
                                 }
-                            } else if(message == context.getString(R.string.add_medicines_dialog)){
-                                navController.navigate(context.getString(R.string.qr_scanner_screen))
+                                context.getString(R.string.delete_medicines_dialog) -> {
+                                    showDialog = false
+                                    scope.launch {
+                                        viewModel.deleteMedicines()
+                                    }
+                                }
+                                else -> {}
                             }
                         }) {
                             Text(
@@ -262,7 +299,8 @@ private fun InstructionsTopAppBar(
                                 text = "Dismiss", color = MaterialTheme.colorScheme.surfaceTint
                             )
                         }
-                    })
+                    }
+                )
             }
         }
     )

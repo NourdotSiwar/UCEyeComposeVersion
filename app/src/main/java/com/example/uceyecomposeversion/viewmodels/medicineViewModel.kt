@@ -39,23 +39,12 @@ class medicineViewModel(private val application: Application) :
         viewModelScope.launch {
             try {
                 val medicines: List<MedicineEntity> = json.decodeFromString(jsonString)
-                medicines.forEach { medicine ->
-                    val medicineRecord = MedicineEntity(
-                        medicineName = medicine.medicineName,
-                        leftEyeSelected = medicine.leftEyeSelected,
-                        rightEyeSelected = medicine.rightEyeSelected,
-                        bothEyesSelected = medicine.bothEyesSelected,
-                        frequency = medicine.frequency,
-                        specialInstruction = medicine.specialInstruction,
-                        expirationDate = medicine.expirationDate,
-                        timestamp = Date().time
-                    )
-                    medicineDao.insertMedicine(medicineRecord)
-                }
-
+                Log.d("JSON STRING:", jsonString)
+                Log.d("MEDICINES:", medicines.toString())
+                medicineDao.insertMedicines(medicines)
             } catch (e: Exception) {
                 Log.e(
-                    "QrViewModel", "Error handling QR Scan Result: ${e.message} due to ${e.cause}"
+                    "QrViewModel", "Error handling QR Scan Result: ${e.message}"
                 )
             }
         }
@@ -66,12 +55,13 @@ class medicineViewModel(private val application: Application) :
     }
 
     suspend fun deleteMedicine(medicineName: String) {
-            medicineDao.deleteMedicine(medicineName)
+        medicineDao.deleteMedicine(medicineName)
     }
 
     suspend fun deleteMedicines() {
         medicineDao.deleteAllMedicines()
     }
+
 
     fun getRelativeTime(date: Date): String {
         val now = Date()
